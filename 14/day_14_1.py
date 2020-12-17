@@ -1,14 +1,26 @@
 #!/usr/bin/env python3
 import re
+from abc import ABC, abstractmethod
 
-class MaskInstruction:
+class Instruction(ABC):
+    @abstractmethod
+    def run_on(self):
+        pass
+
+class MaskInstruction(Instruction):
     def __init__(self, mask):
         self.mask = mask
+    
+    def run_on(self, system):
+        system.set_mask(self.mask)
 
-class MemInstruction:
+class MemInstruction(Instruction):
     def __init__(self, address, value):
         self.address = address
         self.value = value
+    
+    def run_on(self, system):
+        system.store_value(self.address, self.value)
 
 class System:
     def __init__(self):
@@ -18,10 +30,7 @@ class System:
     
     def run(self, program):
         for instruction in program:
-            if type(instruction) is MaskInstruction:
-                self.set_mask(instruction.mask)
-            elif type(instruction) is MemInstruction:
-                self.store_value(instruction.address, instruction.value)
+            instruction.run_on(self)
     
     def store_value(self, address, value):
         masked_value = self.mask_value(value)
