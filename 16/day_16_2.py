@@ -108,15 +108,18 @@ def main():
 
     rule_position = {}
 
+    # Loop through rules looking for rules where there is only one valid position
     while(len(rule_position) != len(rules)):
         for rule, rule_positions in valid_rule_positions.items():
+            # Check if there is only one valid position
             if sum(rule_positions) == 1:
-                for position, valid in enumerate(rule_positions):
-                    if valid:
-                        rule_position[rule] = position
-                        for rule2, rule_positions in valid_rule_positions.items():
-                            if rule2 != rule:
-                                rule_positions[position] = False
+                position = rule_positions.index(True)
+                rule_position[rule] = position
+                # This rule HAS to be in the only valid position
+                # so none of the other rules can be in this position
+                for rule2, rule_positions in valid_rule_positions.items():
+                    if rule2 != rule:
+                        rule_positions[position] = False
 
     total = 1
 
